@@ -1,5 +1,5 @@
 import { PipelineRunKind } from "@janus-idp/shared-react";
-import { CoreV1Api, CustomObjectsApi, KubeConfig, V1ObjectMeta, V1Secret } from "@kubernetes/client-node";
+import { CoreV1Api, CustomObjectsApi, KubeConfig, V1ObjectMeta, V1Secret, V1ComponentStatus } from "@kubernetes/client-node";
 import { ApplicationSpec, OpenshiftRoute, PipelineRunList } from "./types";
 
 export class KubeClient {
@@ -158,6 +158,25 @@ export class KubeClient {
       await client.createNamespacedSecret(namespace, body);
     } catch (error) {
       throw new Error(`Failed to create secret ${name}: ${error}`);
+    }
+  }
+
+  async getAIWorkbenchStatus(componentName: string, namespace: string): Promise<boolean> {
+    const customObjectsApi = this.kubeConfig.makeApiClient(CustomObjectsApi);
+    try {
+      const { body } = await customObjectsApi.getNamespacedCustomObject('kubeflow.org', 'v1', namespace, 'notebooks', `${componentName}-notebook`);
+      const notebook = body as { status: V1ComponentStatus };
+
+      const ready = notebook.status.conditions?.find((condition) => {
+        return condition.type === 'Ready';
+      });
+      if (!ready || ready.status === 'False') {
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw new Error(`Failed to fetch workbench status for ${componentName}: ${error}`);
     }
   }
 }

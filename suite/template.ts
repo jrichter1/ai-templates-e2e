@@ -140,5 +140,12 @@ export const templateSuite = (template: AITemplate, appInfo: ApplicationInfo, re
 
       expect(success).toBe(true);
     }, 12000);
+
+    if (deploymentInfo.rhoaiSelected === true) {
+      it('AI workbench is created', async () => {
+        const workbenchReady = await kube.getAIWorkbenchStatus(appInfo.name, deploymentInfo.namespace);
+        expect(workbenchReady).toBe(true);
+      });
+    }
   });
 }
