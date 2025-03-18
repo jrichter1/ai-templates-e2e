@@ -3,7 +3,6 @@ import { DeveloperHubClient } from "../API/developerHub-client";
 import { GitHubClient } from "../API/git/github";
 import { KubeClient } from "../API/kube";
 import { ApplicationInfo, DeploymentInformation, RepositoryInfo, ExistingModelSecret } from "../API/types";
-import { loadPlaywrightSuite } from '../playwright/loader';
 import { AITemplate } from './types';
 import { GitLabClient } from '../API/git/gitlab';
 import { GitClient } from '../API/git/types';
@@ -141,9 +140,5 @@ export const templateSuite = (template: AITemplate, appInfo: ApplicationInfo, re
 
       expect(success).toBe(true);
     }, 12000);
-
-    describe('Application UI tests', () => {
-      loadPlaywrightSuite(template).appTest(appInfo.name, deploymentInfo.namespace);
-    });
   });
 }

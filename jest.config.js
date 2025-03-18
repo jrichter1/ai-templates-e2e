@@ -11,7 +11,7 @@ module.exports = {
     ["jest-html-reporters", {
       "publicPath": process.env.ARTIFACT_DIR || "./artifacts",
       "filename": "report.html",
-      "openReport": true,
+      "openReport": false,
       "expand": true,
     }]
   ]
