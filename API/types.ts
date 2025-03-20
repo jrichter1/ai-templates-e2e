@@ -30,7 +30,14 @@ interface DeployedModel {
   modelNameDeployed: string
 }
 
-export type ApplicationInfo = ExistingModel | ExistingModelSecret | DeployedModel;
+interface StandaloneModel {
+  name: string
+  owner?: string
+  modelServer: 'vLLM'
+  modelNameDeployed: 'ibm-granite/granite-3.1-8b-instruct'
+}
+
+export type ApplicationInfo = ExistingModel | ExistingModelSecret | DeployedModel | StandaloneModel;
 
 interface GithubInfo {
   hostType: 'GitHub'
@@ -50,12 +57,23 @@ interface GitlabInfo {
 
 export type RepositoryInfo = GithubInfo | GitlabInfo
 
-export interface DeploymentInformation {
+
+export interface ApplicationDeploymentInfo {
   imageRegistry: string
   imageOrg: string
   imageName: string
   namespace: string
   rhoaiSelected: boolean
+}
+
+interface ModelDeploymentInfo {
+  namespace: string
+}
+
+export type DeploymentInfo = ApplicationDeploymentInfo | ModelDeploymentInfo;
+
+export const isApplicationDeployment = (object: DeploymentInfo): object is ApplicationDeploymentInfo => {
+  return (object as ApplicationDeploymentInfo).imageRegistry !== undefined;
 }
 
 export interface PipelineRunSpec {

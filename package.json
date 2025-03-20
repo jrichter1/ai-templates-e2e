@@ -5,7 +5,7 @@
   "author": "Red Hat",
   "license": "MIT",
   "scripts": {
-    "test": "NODE_NO_WARNINGS=1 JEST_JUNIT_OUTPUT_DIR=${ARTIFACT_DIR-./artifacts} jest --config=jest.config.js"
+    "test": "jest --config=jest.config.js"
   },
   "dependencies": {
     "@backstage/plugin-scaffolder-common": "^1.5.6",

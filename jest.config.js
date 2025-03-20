@@ -6,6 +6,8 @@ module.exports = {
     "^.+.tsx?$": ["ts-jest",{}],
   },
   verbose: true,
+  testRunner: 'jest-circus/runner',
+  testEnvironment: './jest-detect-fail.js',
   reporters: [
     "default",
     ["jest-html-reporters", {

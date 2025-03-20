@@ -2,7 +2,7 @@ import { TemplateEntityV1beta3 } from '@backstage/plugin-scaffolder-common';
 import { ScaffolderScaffoldOptions, ScaffolderTask } from '@backstage/plugin-scaffolder-react';
 import axios, { Axios, AxiosResponse } from 'axios';
 import * as https from 'https';
-import { ApplicationInfo, DeploymentInformation, RepositoryInfo, TaskIdReponse } from './types';
+import { ApplicationInfo, DeploymentInfo, RepositoryInfo, TaskIdReponse, isApplicationDeployment } from './types';
 
 export class DeveloperHubClient {
   private readonly RHDHUrl: string;
@@ -70,7 +70,7 @@ export class DeveloperHubClient {
     }
   }
 
-  createTemplateOptions(templateName: string, appInfo: ApplicationInfo, repoInfo: RepositoryInfo, deploymentInfo: DeploymentInformation): ScaffolderScaffoldOptions {
+  createTemplateOptions(templateName: string, appInfo: ApplicationInfo, repoInfo: RepositoryInfo, deploymentInfo: DeploymentInfo): ScaffolderScaffoldOptions {
     const taskOptions: ScaffolderScaffoldOptions = {
       templateRef: `template:default/${templateName}`,
       values: {
@@ -81,12 +81,15 @@ export class DeveloperHubClient {
         repoOwner: repoInfo.repoOwner,
         repoName: repoInfo.repoName,
         branch: repoInfo.branch,
-        imageRegistry: deploymentInfo.imageRegistry,
-        imageOrg: deploymentInfo.imageOrg,
-        imageName: deploymentInfo.imageName,
-        namespace: deploymentInfo.namespace,
-        rhoaiSelected: deploymentInfo.rhoaiSelected
+        namespace: deploymentInfo.namespace
       }
+    }
+    if (isApplicationDeployment(deploymentInfo)) {
+      taskOptions.values.imageRegistry = deploymentInfo.imageRegistry;
+      taskOptions.values.imageOrg = deploymentInfo.imageOrg;
+      taskOptions.values.imageName = deploymentInfo.imageName;
+      taskOptions.values.namespace = deploymentInfo.namespace;
+      taskOptions.values.rhoaiSelected = deploymentInfo.rhoaiSelected;
     }
     if (appInfo.modelServer === 'Existing model server') {
       taskOptions.values.modelEndpoint = appInfo.modelEndpoint;

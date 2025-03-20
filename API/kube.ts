@@ -1,5 +1,5 @@
 import { PipelineRunKind } from "@janus-idp/shared-react";
-import { CoreV1Api, CustomObjectsApi, KubeConfig, V1ObjectMeta, V1Secret, V1ComponentStatus } from "@kubernetes/client-node";
+import { CoreV1Api, CustomObjectsApi, KubeConfig, V1ObjectMeta, V1Secret, V1ComponentStatus, V1DeleteOptions } from "@kubernetes/client-node";
 import { ApplicationSpec, OpenshiftRoute, PipelineRunList } from "./types";
 
 export class KubeClient {
@@ -90,15 +90,14 @@ export class KubeClient {
     throw new Error(`Timeout reached waiting for pipeline run '${name}' to finish.`);
   }
 
-  async waitForArgoCDApplicationToBeHealthy(name: string, targetRevision: string, timeoutMs: number): Promise<boolean> {
+  async waitForArgoCDApplicationToBeHealthy(name: string, namespace: string, targetRevision: string, timeoutMs: number): Promise<boolean> {
     const customObjectsApi = this.kubeConfig.makeApiClient(CustomObjectsApi);
     const retryInterval = 10 * 1000;
     let totalTimeMs = 0;
 
     while (timeoutMs === 0 || totalTimeMs < timeoutMs) {
       try {
-        // look into why it's always ai-rhdh
-        const { body } = await customObjectsApi.getNamespacedCustomObject('argoproj.io', 'v1alpha1', 'ai-rhdh', 'applications', name);
+        const { body } = await customObjectsApi.getNamespacedCustomObject('argoproj.io', 'v1alpha1', namespace, 'applications', name);
         const application = body as ApplicationSpec;
 
         if (application.status && application.status.sync && application.status.sync.status &&
@@ -178,5 +177,15 @@ export class KubeClient {
       console.error(error);
       throw new Error(`Failed to fetch workbench status for ${componentName}: ${error}`);
     }
+  }
+
+  async deleteArgoCDApplication(componentName: string, namespace: string) {
+    const customObjectsApi = this.kubeConfig.makeApiClient(CustomObjectsApi);
+    await customObjectsApi.deleteNamespacedCustomObject('argoproj.io', 'v1alpha1', namespace, 'applications', `${componentName}-app-of-apps`);
+  }
+
+  async deleteAIWorkbench(componentName: string, namespace: string) {
+    const customObjectsApi = this.kubeConfig.makeApiClient(CustomObjectsApi);
+    await customObjectsApi.deleteNamespacedCustomObject('kubeflow.org', 'v1', namespace, 'notebooks', `${componentName}-notebook`);
   }
 }

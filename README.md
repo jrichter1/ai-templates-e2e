@@ -51,11 +51,20 @@ At this point, the file `tests/chatbot.test.ts` becomes a test suite and will be
 
 In order to run the tests successfully, several requirements must be met:
  - RHDH test instance, with `backend.auth.dangerouslyDisableDefaultAuthPolicy` set to true
+ - kube config with the correct cluster context (logged in to the cluster hosting RHDH)
  - `DEVELOPER_HUB_URL` environment variable containing the base URL of your RHDH instance
  - `GITHUB_TOKEN` environment variable containing your github token when using github as source host
  - `GITLAB_TOKEN` environment variable containing your gitlab token when using gitlab as source host
  - `GIT_WEBHOOK_SECRET` environment variable containing PaC secret for webhooks, when using gitlab
  - `MODEL_SECRET` environment variable containing the bearer token for any secured existing model
+
+Use the following environment variables to customize the existing tests:
+ - `GITHUB_HOST` sets host name for github instance (default `github.com`)
+ - `GITHUB_ORG` sets github organization that will own the created repositories
+ - `IMAGE_REGISTRY` sets the registry that will host the images created (default `quay.io`)
+ - `IMAGE_ORG` sets the organization in the image registry that will own the images
+ - `DEPLOYMENT_NAMESPACE` sets the namespace your applications will be deployed to on the cluster
+ - `RHDH_NAMESPACE` the namespace that houses the developer hub instance and argocd applications
 
 ## Running the tests
 

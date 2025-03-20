@@ -8,6 +8,10 @@ export class GitLabClient implements GitClient {
     this.gitlab = new Gitlab({ token, host });
   }
 
+  deleteRepository(org: string, name: string): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
+
   waitPullMerged(org: string, repo: string, pullNumber: number, retries?: number | undefined): Promise<void> {
     throw new Error('Method not implemented.');
   }
