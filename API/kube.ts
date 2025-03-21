@@ -39,7 +39,7 @@ export class KubeClient {
           await new Promise((resolve) => setTimeout(resolve, retryInterval));
         }
       } catch (error) {
-        console.error(`Error fetching pipeline runs (Attempt ${attempt}):`, error);
+        console.error(`Error fetching pipeline runs (Attempt ${attempt}):`);
         if (attempt < maxAttempts) {
           console.log(`Retrying in ${retryInterval / 1000} seconds...`);
           await new Promise((resolve) => setTimeout(resolve, retryInterval));
@@ -82,7 +82,7 @@ export class KubeClient {
           }
         }
       } catch (error) {
-        console.error('Error fetching pipeline run: retrying', error);
+        console.error('Error fetching pipeline run: retrying');
       }
       await new Promise((resolve) => setTimeout(resolve, retryInterval));
       totalTimeMs += retryInterval;
@@ -136,8 +136,7 @@ export class KubeClient {
       const route = openshiftRoute as OpenshiftRoute;
       return `https://${route.spec.host}`;
     } catch (error) {
-      console.error(error);
-      throw new Error(`Failed to obtain openshift route ${name}: ${error}`);
+      throw new Error(`Failed to fetch openshift route ${name}: ${error}`);
     }
   }
 
@@ -174,7 +173,6 @@ export class KubeClient {
       }
       return true;
     } catch (error) {
-      console.error(error);
       throw new Error(`Failed to fetch workbench status for ${componentName}: ${error}`);
     }
   }

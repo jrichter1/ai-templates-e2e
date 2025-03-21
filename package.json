@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "AI software templates E2E tests",
   "author": "Red Hat",
-  "license": "MIT",
   "scripts": {
     "test": "jest --config=jest.config.js"
   },
